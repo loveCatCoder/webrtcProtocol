@@ -1,0 +1,76 @@
+server-sdp:
+v=0
+o=- 0 0 IN IP4 127.0.0.1
+s=LicodeMCU
+t=0 0
+a=group:BUNDLE 0 1
+a=msid-semantic: WMS R1mZyDFB7C
+m=audio 1 UDP/TLS/RTP/SAVPF 8
+c=IN IP4 0.0.0.0
+a=rtcp: 1 IN IP4 0.0.0.0
+a=candidate: 123 1 udp 123 192.168.0.224 36772 typ host generation 0
+a=ice-ufrag: 9id5
+a=ice-pwd:xc69cib57x4devyu2xzy978y
+a=fingerprint:sha-256 77: 46: 6B: 70:C9: 7B: 14:CE:3E: 1D: 8F: 57:3E:7E: 2B: 70:E3: 84:7E: 4C: 22: 14: 01: 21: 56:E5:A2: 4F: 72: 45:FE: 49
+a=setup:actpass
+a=sendonly
+a=mid: 1
+a=rtcp-mux
+a=rtpmap: 8 pcma/8000
+m=video 1 UDP/TLS/RTP/SAVPF 96
+c=IN IP4 0.0.0.0
+a=rtcp: 1 IN IP4 0.0.0.0
+a=candidate: 123 1 udp 123 192.168.0.224 36772 typ host generation 0
+a=ice-ufrag: 9id5
+a=ice-pwd:xc69cib57x4devyu2xzy978y
+a=fingerprint:sha-256 77: 46: 6B: 70:C9: 7B: 14:CE:3E: 1D: 8F: 57:3E:7E: 2B: 70:E3: 84:7E: 4C: 22: 14: 01: 21: 56:E5:A2: 4F: 72: 45:FE: 49
+a=setup:actpass
+a=sendonly
+a=mid: 0
+a=rtcp-mux
+a=rtpmap: 96 H264/90000
+
+client-sdp: 
+v=0
+o=- 1477285350640042544 2 IN IP4 127.0.0.1
+s=-
+t=0 0
+a=group:BUNDLE 1 0
+a=msid-semantic: WMS
+m=audio 9 UDP/TLS/RTP/SAVPF 8
+c=IN IP4 0.0.0.0
+a=rtcp: 9 IN IP4 0.0.0.0
+a=ice-ufrag:YjFP
+a=ice-pwd:Ic9l7mxT/wFcTvCUo29z214q
+a=ice-options:trickle
+a=fingerprint:sha-256 A6: 49: 11: 6D:E7:BE: 87:C6:A5:BB: 09:F9: 6C: 21: 59: 21: 8D:F1: 92:6E:B4:6E: 95: 3F: 65:AC:CC:E7:D6: 06: 43: 25
+a=setup:active
+a=mid: 1
+a=recvonly
+a=rtcp-mux
+a=rtpmap: 8 pcma/8000
+m=video 9 UDP/TLS/RTP/SAVPF 96
+c=IN IP4 0.0.0.0
+a=rtcp: 9 IN IP4 0.0.0.0
+a=ice-ufrag:YjFP
+a=ice-pwd:Ic9l7mxT/wFcTvCUo29z214q
+a=ice-options:trickle
+a=fingerprint:sha-256 A6: 49: 11: 6D:E7:BE: 87:C6:A5:BB: 09:F9: 6C: 21: 59: 21: 8D:F1: 92:6E:B4:6E: 95: 3F: 65:AC:CC:E7:D6: 06: 43: 25
+a=setup:active
+a=mid: 0
+a=recvonly
+a=rtcp-mux
+a=rtpmap: 96 H264/90000
+a=fmtp: 96 level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42e01f
+
+client-candidate: {
+    "candidate": "candidate:2551718687 1 udp 2113937151 6f344f88-dea2-48b5-bbb1-72d1d3a309fe.local 57405 typ host generation 0 ufrag YjFP network-cost 999",
+    "sdpMid": "1",
+    "sdpMLineIndex": 0
+}
+
+client-candidate: {
+    "candidate": "candidate:133560539 1 udp 2113932031 84cb9db0-9dbf-4f0c-8778-78d1f63c6198.local 57406 typ host generation 0 ufrag YjFP network-cost 999",
+    "sdpMid": "1",
+    "sdpMLineIndex": 0
+}

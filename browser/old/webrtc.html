@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--
+ *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree.
+-->
+<html>
+
+<body>
+    <br>
+    <br>
+    <header class="sticky row" style="text-align: center;">
+        <h4>WebRTC测试 demo</h4>
+    </header>
+    <br>
+    <br>
+    <!-- //10.0.25.222:3000  320000102625 -->
+    <div style="float:left;margin-left: 40px;">
+        <p>websocket服务器地址:
+            <input type='text' id='server-address' value='192.168.0.224:3000' size="20" />
+        </p>
+        <p>设备id:
+            <input type='text' id='device-id' value='192168100100' size="8" />
+        </p>
+        <p>
+            录像起始时间：
+            <input size="40" type="datetime-local" id="start-time" name="meeting-time" value="2021-06-09T12:10"
+                min="2018-06-07T00:00" max="2025-01-01T00:00">
+        </p>
+        <p>播放速度:
+            <input size="5" type='number'  id='scale-input' value='1'  />
+        </p>
+        <!-- <button id="connect-button">开始连接</button>
+        <button id="stop-button">断开连接</button> <br><br> -->
+        <a>实时流：</a><br><br>
+        <button style="margin-left: 10px;" id="play-realtime-button">开始实时流</button>
+        <button id="teardown-realtime-button">暂停实时流</button> <br><br>
+        <a>回放：</a><br><br>
+        <button style="margin-left: 10px;" id="read-index-button">读取索引</button>
+        <button id="play-record-button">开始回放</button>
+        <button id="pause-record-button">暂停回放</button>
+        <button id="teardown-record-button">停止回放</button>
+        <ul id="time-index">
+        </ul>
+    </div>
+    <div style="float:right;margin-right: 100px;">
+        <video id="webrtc-stream" autoplay playsinline controls
+            style="width: 640px; height: 360px; border: 2px solid black;"></video>
+    </div>
+</body>
+<script src="js/adapter.js"></script>
+<script src="js/common.js"></script>
+<script src="js/main.js"></script>
+
+</html>
