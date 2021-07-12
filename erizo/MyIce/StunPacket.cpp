@@ -416,8 +416,8 @@ namespace RTC
 
 				// Check that USERNAME attribute begins with our local username plus ":".
 				size_t localUsernameLen = localUsername.length();
-				dzlog_info("StunPacket:erizoname:%s",localUsername.c_str());
-				dzlog_info("StunPacket:browername:%s",this->username.c_str());
+				// dzlog_info("StunPacket:erizoname:%s",localUsername.c_str());
+				// dzlog_info("StunPacket:browername:%s",this->username.c_str());
 				if (
 				  this->username.length() <= localUsernameLen || this->username.at(localUsernameLen) != ':' ||
 				  (this->username.compare(0, localUsernameLen, localUsername) != 0))

@@ -173,9 +173,9 @@ void IceServer::ProcessStunPacket(RTC::StunPacket * packet, sockaddr_in * remote
 		// 	return;
 		// }
 
-		ELOG_DEBUG("processing STUN Binding Request [Priority:%d, UseCandidate:%s]",
-			static_cast<uint32_t>(packet->GetPriority()),
-			(packet->HasUseCandidate() ? "true" : "false"));
+		// ELOG_DEBUG("processing STUN Binding Request [Priority:%d, UseCandidate:%s]",
+		// 	static_cast<uint32_t>(packet->GetPriority()),
+		// 	(packet->HasUseCandidate() ? "true" : "false"));
 
 		// Create a success response.
 		RTC::StunPacket* response = packet->CreateSuccessResponse();

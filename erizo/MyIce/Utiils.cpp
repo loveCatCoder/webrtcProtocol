@@ -65,9 +65,12 @@ namespace Utils
 		//Crypto::hmacSha1Ctx = HMAC_CTX_new();
 		if(Crypto::hmacSha1Ctx == nullptr){
             Crypto::hmacSha1Ctx = HMAC_CTX_new();;
-			if(Crypto::hmacSha1Ctx = nullptr){
+			if(Crypto::hmacSha1Ctx == nullptr){
 				dzlog_info("Crypto::hmacSha1Ctx init fail");
 			}
+			dzlog_info("hmacSha1Ctx init:%p",Crypto::hmacSha1Ctx);
+		}else{
+			dzlog_info("hmacSha1Ctx: not init:%p",Crypto::hmacSha1Ctx);
 		}
 	}
 
@@ -82,15 +85,23 @@ namespace Utils
 
 	const uint8_t* Crypto::GetHmacShA1(const std::string& key, const uint8_t* data, size_t len)
 	{
-		//MS_TRACE();
-
-		//int ret = 0;
-
-		//ret = HMAC_Init_ex(Crypto::hmacSha1Ctx, key.c_str(), key.length(), EVP_sha1(), nullptr);
-        HMAC_Init_ex(Crypto::hmacSha1Ctx, key.c_str(), key.length(), EVP_sha1(), nullptr);
-		//MS_ASSERT(ret == 1, "OpenSSL HMAC_Init_ex() failed with key '%s'", key.c_str());
-        HMAC_Update(Crypto::hmacSha1Ctx, data, static_cast<int>(len));
-		//ret = HMAC_Update(Crypto::hmacSha1Ctx, data, static_cast<int>(len));
+		int ret = 0;
+		// dzlog_info("hmacSha1Ctx:%x",Crypto::hmacSha1Ctx);
+		// dzlog_info("key:%s,lengh:%d",key.c_str(),key.length());
+		ret = HMAC_Init_ex(Crypto::hmacSha1Ctx, key.c_str(), key.length(), EVP_sha1(), nullptr);
+        // HMAC_Init_ex(Crypto::hmacSha1Ctx, key.c_str(), key.length(), EVP_sha1(), nullptr);
+		if(ret!=1)
+		{
+			dzlog_info("OpenSSL HMAC_Init_ex() failed with key '%s'", key.c_str());
+			return nullptr;
+		}
+        // HMAC_Update(Crypto::hmacSha1Ctx, data, static_cast<int>(len));
+		ret = HMAC_Update(Crypto::hmacSha1Ctx, data, static_cast<int>(len));
+		if(ret!=1)
+		{
+			dzlog_info("OpenSSL HMAC_Update() failed with key '%s' and data length %zu bytes", key.c_str(),len);
+			return nullptr;
+		}
 		/*
 		MS_ASSERT(
 		  ret == 1,
@@ -100,8 +111,13 @@ namespace Utils
 		  */
 		uint32_t resultLen = 0;
 
-		//ret = HMAC_Final(Crypto::hmacSha1Ctx, (uint8_t*)Crypto::hmacSha1Buffer, &resultLen);
-        HMAC_Final(Crypto::hmacSha1Ctx, (uint8_t*)Crypto::hmacSha1Buffer, &resultLen);
+		ret = HMAC_Final(Crypto::hmacSha1Ctx, (uint8_t*)Crypto::hmacSha1Buffer, &resultLen);
+		if(ret!=1)
+		{
+			dzlog_info("OpenSSL HMAC_Final() failed with key '%s' and data length %du bytes", key.c_str(), resultLen);
+			return nullptr;
+		}
+        // HMAC_Final(Crypto::hmacSha1Ctx, (uint8_t*)Crypto::hmacSha1Buffer, &resultLen);
 		/*
 		MS_ASSERT(
 		  ret == 1, "OpenSSL HMAC_Final() failed with key '%s' and data length %zu bytes", key.c_str(), len);

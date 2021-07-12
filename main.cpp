@@ -1,13 +1,20 @@
-#include <cstdio>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include <memory>
 
 #include <http/httplib.h>
 #include <openssl/ssl.h>
 #include <json/json.hpp>
+#include <openssl/sha.h>
+#include <openssl/hmac.h>
 
 #include "erizo/logger.h"
 #include "erizo/MyIce/MyIceConnection.h"
 #include "erizo/MyIce/MyLoop.h"
-
+#include "erizo/MyIce/Utils.hpp"
+#include "erizo/dtls/DtlsTransport.h"
 
 
 using namespace httplib;
@@ -92,21 +99,25 @@ string log(const Request &req, const Response &res)
 
     return s;
 }
-
+#if 1
 int main()
 {
     
-
-
     printf("iceserver is run\n");
-    auto rc = dzlog_init("/home/zn/IceServer/zlog.conf", "iceserver");
+    auto rc = dzlog_init("/home/zn/webrtcProtocol/zlog.conf", "iceserver");
     if (rc)
     {
         printf("init failed\n");
     }
     dzlog_info("hello, zlog");
 
+    Utils::Crypto::ClassInit();
+
     httplib::Server svr;
+
+    std::shared_ptr<erizo::DtlsTransport> dtlsTransport = std::make_shared<erizo::DtlsTransport>();
+ 
+    dtlsTransport->OpensslInit();
 
     erizo::IceConfig  iceConfig;   
     iceConfig.connection_id = "connection_id_";
@@ -116,8 +127,10 @@ int main()
     iceConfig.network_interface = "127.0.0.1";
     std::shared_ptr<erizo::MyIceConnection> ice_ = std::shared_ptr<erizo::MyIceConnection>(new erizo::MyIceConnection(MyLoop::GetLoop(),iceConfig));
     ice_->start();
+    ice_->setIceListener(dtlsTransport);
+    dtlsTransport->SetConnptr(ice_.get());
     char sdpbuffer[2048] = {0};
-    sprintf(sdpbuffer,"v=0\no=- 0 0 IN IP4 127.0.0.1\ns=LicodeMCU\nt=0 0\na=group:BUNDLE 0 1\na=msid-semantic: WMS naeY7dlMmr\nm=audio 1 UDP/TLS/RTP/SAVPF 8\nc=IN IP4 0.0.0.0\na=rtcp:1 IN IP4 0.0.0.0\na=candidate:123 1 udp 123 127.0.0.1 %d typ host generation 0\na=ice-ufrag:%s\na=ice-pwd:%s\na=fingerprint:sha-256 4D:70:EC:D5:3E:B3:8C:29:B5:C2:14:66:1A:FA:38:DC:5B:72:17:FF:DD:2C:77:C1:8B:91:9C:64:AF:4E:DE:68\na=setup:actpass\na=sendonly\na=mid:1\na=rtcp-mux\na=rtpmap:8 pcma/8000\nm=video 1 UDP/TLS/RTP/SAVPF 96\nc=IN IP4 0.0.0.0\na=rtcp:1 IN IP4 0.0.0.0\na=candidate:123 1 udp 123 192.168.0.224 %d typ host generation 0\na=ice-ufrag:%s\na=ice-pwd:%s\na=fingerprint:sha-256 4D:70:EC:D5:3E:B3:8C:29:B5:C2:14:66:1A:FA:38:DC:5B:72:17:FF:DD:2C:77:C1:8B:91:9C:64:AF:4E:DE:68\na=setup:actpass\na=sendonly\na=mid:0\na=rtcp-mux\na=rtpmap:96 H264/90000\n",ice_->GetPort(),ice_->getLocalUsername().c_str(),ice_->getLocalPassword().c_str(),ice_->GetPort(),ice_->getLocalUsername().c_str(),ice_->getLocalPassword().c_str());
+    sprintf(sdpbuffer,"v=0\no=- 0 0 IN IP4 127.0.0.1\ns=LicodeMCU\nt=0 0\na=group:BUNDLE 0 1\na=msid-semantic: WMS naeY7dlMmr\nm=audio 1 UDP/TLS/RTP/SAVPF 8\nc=IN IP4 0.0.0.0\na=rtcp:1 IN IP4 0.0.0.0\na=candidate:123 1 udp 123 127.0.0.1 %d typ host generation 0\na=ice-ufrag:%s\na=ice-pwd:%s\na=fingerprint:sha-256 %s\na=setup:actpass\na=sendonly\na=mid:1\na=rtcp-mux\na=rtpmap:8 pcma/8000\nm=video 1 UDP/TLS/RTP/SAVPF 96\nc=IN IP4 0.0.0.0\na=rtcp:1 IN IP4 0.0.0.0\na=candidate:123 1 udp 123 192.168.0.224 %d typ host generation 0\na=ice-ufrag:%s\na=ice-pwd:%s\na=fingerprint:sha-256 %s\na=setup:actpass\na=sendonly\na=mid:0\na=rtcp-mux\na=rtpmap:96 H264/90000\n",ice_->GetPort(),ice_->getLocalUsername().c_str(),ice_->getLocalPassword().c_str(),dtlsTransport->GetFingerprint(),ice_->GetPort(),ice_->getLocalUsername().c_str(),ice_->getLocalPassword().c_str(),dtlsTransport->GetFingerprint());
     svr.Post("/serversdp", [&sdpbuffer](const httplib::Request &, httplib::Response &res)
              {
                  json j;
@@ -159,7 +172,9 @@ int main()
 
     svr.set_logger(
         [](const httplib::Request &req, const httplib::Response &res)
-        { dzlog_info(log(req, res).c_str()); });
+        { 
+            // dzlog_info(log(req, res).c_str());
+        });
 
     auto port = 7788;
 
@@ -177,6 +192,81 @@ int main()
 
     zlog_fini();
 
-
+    Utils::Crypto::ClassDestroy();
     return 0;
 }
+#endif
+
+static struct test_st {
+    const char key[17];
+    int key_len;
+    const unsigned char data[64];
+    int data_len;
+    const char *digest;
+} test[8] = {
+    {
+        "", 0, "More text test vectors to stuff up EBCDIC machines :-)", 54,
+        "e9139d1e6ee064ef8cf514fc7dc83e86",
+    },
+    {
+        "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b",
+        16, "Hi There", 8,
+        "9294727a3638bb1c13f48ef8158bfc9d",
+    },
+    {
+        "Jefe", 4, "what do ya want for nothing?", 28,
+        "750c783e6ab0b503eaa86e310a5db738",
+    },
+    {
+        "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
+        16, {
+            0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
+            0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
+            0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
+            0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd,
+            0xdd, 0xdd, 0xdd, 0xdd, 0xdd, 0xdd
+        }, 50, "56be34521d144c88dbb8c733f0e8b3f6",
+    },
+    {
+        "", 0, "My test data", 12,
+        "61afdecb95429ef494d61fdee15990cabf0826fc"
+    },
+    {
+        "", 0, "My test data", 12,
+        "2274b195d90ce8e03406f4b526a47e0787a88a65479938f1a5baa3ce0f079776"
+    },
+    {
+        "123456", 6, "My test data", 12,
+        "bab53058ae861a7f191abe2d0145cbb123776a6369ee3f9d79ce455667e411dd"
+    },
+    {
+        "12345", 5, "My test data again", 18,
+        "a12396ceddd2a85f4c656bc1e0aa50c78cffde3e"
+    }
+};
+
+
+// int main()
+// {
+//     auto rc = dzlog_init("/home/zn/webrtcProtocol/zlog.conf", "iceserver");
+//     if (rc)
+//     {
+//         printf("init failed\n");
+//     }
+//     dzlog_info("hello, zlog");
+//     char *p;
+//     HMAC_CTX *ctx = NULL;
+//     unsigned char buf[EVP_MAX_MD_SIZE];
+//     unsigned int len;
+//     int ret = 0;
+//     char key[25] = "g23xv58l2fu6atjytvg6065i";
+//     ctx = HMAC_CTX_new();
+//     // HMAC_CTX_reset(ctx);
+//     HMAC_Init_ex(ctx, key, 24, EVP_sha1(), NULL);
+//     // HMAC_Init_ex(ctx, test[4].key, test[4].key_len, EVP_sha1(), NULL);
+//     HMAC_Update(ctx, test[4].data, test[4].data_len);
+//     HMAC_Final(ctx, buf, &len);
+
+//     HMAC_CTX_free(ctx);
+//     dzlog_info("buf:%s",buf);
+// }

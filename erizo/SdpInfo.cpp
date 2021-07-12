@@ -474,7 +474,7 @@ namespace erizo {
   // TODO(pedro): Should provide hints
   void SdpInfo::createOfferSdp(bool videoEnabled, bool audioEnabled, bool bundle) {
     ELOG_DEBUG("Creating offerSDP: video %d, audio %d, bundle %d, payloadVector: %d, extSize: %d",
-      videoEnabled, audioEnabled, bundle, payloadVector.size(), extMapVector.size());
+      videoEnabled, audioEnabled, bundle, static_cast<int>(payloadVector.size()), static_cast<int>(extMapVector.size()));
     if (payloadVector.size() == 0) {
       payloadVector = internalPayloadVector_;
     }
@@ -513,7 +513,7 @@ namespace erizo {
     outInPTMap = offerSdp->outInPTMap;
     extMapVector = offerSdp->extMapVector;
     ELOG_DEBUG("Offer SDP successfully copied, extSize: %d, payloadSize: %d, videoCodecs: %d, audioCodecs: %d",
-      extMapVector.size(), payloadVector.size(), videoCodecs, audioCodecs);
+      static_cast<int>(extMapVector.size()), static_cast<int>(payloadVector.size()), videoCodecs, audioCodecs);
   }
 
   void SdpInfo::setOfferSdp(std::shared_ptr<SdpInfo> offerSdp) {

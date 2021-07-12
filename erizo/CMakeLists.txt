@@ -7,6 +7,7 @@ add_library(erizo STATIC ${CMAKE_CURRENT_SOURCE_DIR}/MyIce/IceServer.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/MyIce/Utiils.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/SdpInfo.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/IceConnection.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/dtls/DtlsTransport.cpp
 )
 
 target_include_directories(erizo PUBLIC

@@ -5,6 +5,14 @@
 #ifndef MYWEBRTC_MYICECONNECTION_H
 #define MYWEBRTC_MYICECONNECTION_H
 
+
+#include <openssl/e_os2.h>
+#include <openssl/rand.h>
+#include <openssl/err.h>
+#include <openssl/crypto.h>
+#include <openssl/ssl.h>
+
+
 #include "IceConnection.h"
 #include <vector>
 #include <queue>
@@ -52,6 +60,8 @@ namespace erizo {
         void OnIceServerCompleted();
         int SendPacket(char * buf, int len, struct sockaddr_in* remoteAddr);
         int GetPort();
+
+        void computeFingerprint(X509 *cert, char *fingerprint);
 
     private:
         std::shared_ptr<IceServer> m_ice_server;
