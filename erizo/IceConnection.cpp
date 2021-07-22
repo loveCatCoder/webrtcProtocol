@@ -82,7 +82,8 @@ void IceConnection::updateIceState(IceState state) {
   }
 
   // Important: send this outside our state lock.  Otherwise, serious risk of deadlock.
-  if (auto listener = this->listener_.lock()) {
+  if(auto listener = this->listener_.lock())
+  {
     listener->updateIceState(state, this);
   }
 }

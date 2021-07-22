@@ -427,7 +427,7 @@ namespace erizo {
         sdp << '\n';
       }
     }
-    ELOG_DEBUG("sdp local \n %s", sdp.str().c_str());
+    // ELOG_DEBUG("sdp local \n %s", sdp.str().c_str());
     return sdp.str();
   }
 

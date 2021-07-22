@@ -237,6 +237,25 @@ void IceServer::HandleTuple(sockaddr_in * remoteAddr, bool hasUseCandidate)
 	}
 }
 
+void IceServer::SetSendCB(FSendCb send_cb) 
+{
+	
+	m_send_cb = send_cb;
+	
+}
+
+void IceServer::SetIceServerCompletedCB(std::function<void()> cb) 
+{
+	
+	m_IceServerCompletedCB = cb;
+	
+}
+
+struct sockaddr_in* IceServer::GetSelectAddr() 
+{
+	return &m_remoteAddr; 
+}
+
 
 
 const std::string& IceServer::GetUsernameFragment() const

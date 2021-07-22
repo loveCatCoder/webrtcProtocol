@@ -24,12 +24,12 @@ function startIce() {
 
 
     var url = 'http://127.0.0.1:7788/serversdp';
-    var data = { username: 'example' };
+    var data = { type: 'get-server-sdp' };
 
 
     fetch(url, {
-        method: 'POST', // or 'PUT'
-        body: JSON.stringify(data), // data can be `string` or {object}!
+        method: 'POST', 
+        body: JSON.stringify(data),
         headers: new Headers({
             'Content-Type': 'application/json'
         }),

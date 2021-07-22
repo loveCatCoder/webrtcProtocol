@@ -5,14 +5,17 @@
 #ifndef ERIZO_SRC_ERIZO_SDPINFO_H_
 #define ERIZO_SRC_ERIZO_SDPINFO_H_
 
-#include <stdint.h>
+
 
 #include <string>
 #include <vector>
 #include <map>
 #include <memory>
 
-#include "./logger.h"
+#include <stdint.h>
+
+
+#include "erizo/logger.h"
 
 namespace erizo {
 /**

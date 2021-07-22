@@ -1,0 +1,11 @@
+prefix=/home/zn/webrtcProtocol/srtp
+exec_prefix=/home/zn/webrtcProtocol/srtp
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libsrtp2
+Version: 2.4.0-pre
+Description: Library for SRTP (Secure Realtime Transport Protocol)
+
+Libs: -L${libdir} -lsrtp2 -L/home/zn/dtlstest/openssl/lib -lcrypto -ldl -pthread 
+Cflags: -I${includedir}
